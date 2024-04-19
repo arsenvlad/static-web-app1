@@ -1,5 +1,5 @@
 {
     "globalHeaders": {
-      "cross-origin-opener-policy": "unsafe-none"
+      "cross-origin-opener-policy": "restrict-properties"
     }
   }
