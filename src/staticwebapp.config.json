@@ -1,5 +1,5 @@
 {
     "globalHeaders": {
-      "cross-origin-opener-policy": "same-origin-allow-popups"
+      "cross-origin-opener-policy": "unsafe-none"
     }
   }
