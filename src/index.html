@@ -1,12 +1,12 @@
 <html>
   <head>
-      <meta http-equiv="Content-Security-Policy" content="script-src-elem self unsafe-inline https://js.live.net/v7.2/OneDrive.js; script-src 'sha256-lN6Ic6iBg7MajIx4r2p3J0G7KVWKaUyySVQpFtCkmUk='">
+      <meta http-equiv="Content-Security-Policy" content="script-src-elem self unsafe-inline https://js.live.net/v7.2/OneDrive.js; script-src: unsafe-inline">
   </head>
 <body>
     <script type="text/javascript" src="https://js.live.net/v7.2/OneDrive.js"></script>
     <button id="OpenOneDrive" type="button" onclick="launchOneDrivePicker()">Open from OneDrive</button>
      <img id="preview" />
-     <script type="text/javascript">
+     <script>
         function launchOneDrivePicker(){
             var odOptions = {
                 clientId: "b93bff43-94e5-4101-a4ef-25e3741b8ebf",
