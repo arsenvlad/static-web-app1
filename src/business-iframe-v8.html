@@ -40,6 +40,9 @@
     var pickerOptions = {
       sdk: "v8.0",
       authentication: {},
+      entry: {
+        oneDrive: {}
+      },
       messaging: {
         origin: location.origin,
         channelId: id
@@ -47,9 +50,10 @@
     };
 
     var pickerPageUrl;
-    pickerPageUrl = pickerUrl + '/_layouts/15/FilePicker.aspx';
+    // Using OneDrive.aspx instead of FilePicker.aspx as a workaround for now
+    pickerPageUrl = pickerUrl + '/_layouts/15/OneDrive.aspx';
 
-    var url = pickerPageUrl + '?filePicker=' + JSON.stringify(pickerOptions);
+    var url = pickerPageUrl + '?p=2&filePicker=' + JSON.stringify(pickerOptions);
     var pickerOrigin = new URL(pickerPageUrl).origin;
 
     var port;
