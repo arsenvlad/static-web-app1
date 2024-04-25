@@ -81,6 +81,8 @@
     var intervalId;
 
     function initialListener(event) {
+      console.log('initialListener', event, pickerOrigin, targetWindow, intervalId);
+
       if (event.origin === pickerOrigin && event.source === targetWindow) {
         var message = event.data;
         output.textContent = JSON.stringify(message);
