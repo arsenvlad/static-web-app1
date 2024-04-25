@@ -64,6 +64,7 @@
         var command = message.data;
 
         if (command.command == "authenticate") {
+          console.log('authenticate ' + oauthToken);
           port.postMessage({
             type: "result",
             id: message.data.id,
