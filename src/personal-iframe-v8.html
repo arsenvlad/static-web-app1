@@ -52,6 +52,8 @@
       var message = event.data;
       output.textContent = JSON.stringify(message);
 
+      console.log(event);
+      
       if (message.type === 'command') {
         port.postMessage({
           type: 'acknowledge',
