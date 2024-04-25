@@ -22,7 +22,7 @@
   var oauthToken = document.getElementById('oauthToken');
   var output = document.getElementById('output');
   var frame = document.getElementById('frame');
-  
+
   hostPicker.addEventListener('click', function () {
     loadPicker(frame.contentWindow, function () {
       frame.src = '';
@@ -54,7 +54,7 @@
       output.textContent = JSON.stringify(message);
 
       console.log(event);
-      
+
       if (message.type === 'command') {
         port.postMessage({
           type: 'acknowledge',
@@ -63,7 +63,16 @@
 
         var command = message.data;
 
-        if (command.command === 'close') {
+        if (command.command == "authenticate") {
+          port.postMessage({
+            type: "result",
+            id: message.data.id,
+            data: {
+              result: "token",
+              oauthToken,
+            }
+          });
+        } else if (command.command === 'close') {
           port.removeEventListener('message', messageListener);
 
           closePicker();
