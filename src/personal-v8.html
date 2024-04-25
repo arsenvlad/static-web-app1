@@ -1,0 +1,130 @@
+<html>
+
+<head>
+</head>
+
+<body>
+  <div>
+    <button id="openPicker">Open [Personal] FilePicker v8</button>
+  </div>
+  <pre id="output"></pre>
+</body>
+
+<script>
+  var openPicker = document.getElementById('openPicker');
+  var output = document.getElementById('output');
+
+  openPicker.addEventListener('click', function () {
+    var popupWindow = window.open('', undefined, 'width=1080,height=720');
+
+    loadPicker(popupWindow, function () {
+      popupWindow.close();
+    });
+  });
+
+  function loadPicker(targetWindow, closePicker) {
+    var id = '' + Math.random().toFixed(6);
+
+    var pickerOptions = {
+      sdk: "v8.0",
+      messaging: {
+        origin: location.origin,
+        channelId: id
+      }
+    };
+
+    var pickerPageUrl;
+    pickerPageUrl = 'https://onedrive.live.com/picker';
+
+    var url = pickerPageUrl + '?filePicker=' + JSON.stringify(pickerOptions);
+    var pickerOrigin = new URL(pickerPageUrl).origin;
+
+    var port;
+
+    function messageListener(event) {
+      var message = event.data;
+      output.textContent = JSON.stringify(message);
+
+      if (message.type === 'command') {
+        port.postMessage({
+          type: 'acknowledge',
+          id: message.id
+        });
+
+        var command = message.data;
+
+        if (command.command === 'close') {
+          port.removeEventListener('message', messageListener);
+
+          closePicker();
+        } else if (command.command === 'pick') {
+          port.removeEventListener('message', messageListener);
+
+          closePicker();
+        } else {
+          port.postMessage({
+            type: 'result',
+            id: message.id,
+            data: {
+              result: 'error',
+              error: {
+                code: 'unsupportedCommand'
+              }
+            }
+          });
+        }
+      } else if (message.type === 'notification') {
+
+      }
+    }
+
+    var intervalId;
+
+    function initialListener(event) {
+      if (event.origin === pickerOrigin && event.source === targetWindow) {
+        var message = event.data;
+        output.textContent = JSON.stringify(message);
+
+        if (message.type === 'initialize' && message.channelId === id) {
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = undefined;
+          }
+
+          port = event.ports[0];
+
+          port.addEventListener('message', messageListener);
+          port.start();
+
+          window.removeEventListener('message', initialListener);
+
+          port.postMessage({
+            type: 'activate'
+          });
+        }
+      }
+    }
+
+    intervalId = setInterval(function () {
+      var identifyParentMessage = {
+        type: 'identify-parent',
+        channelId: id
+      };
+
+      targetWindow.postMessage(identifyParentMessage, pickerOrigin);
+    }, 100);
+
+    window.addEventListener('message', initialListener);
+
+    var form = targetWindow.document.createElement('form');
+    form.setAttribute('method', 'POST');
+    form.setAttribute('action', url);
+
+    targetWindow.document.body.appendChild(form);
+
+    form.submit();
+  }
+
+</script>
+
+</html>
