@@ -64,13 +64,14 @@
         var command = message.data;
 
         if (command.command == "authenticate") {
-          console.log('authenticate ' + oauthToken);
+          var token = oauthToken.value;
+          console.log('authenticate ' + token);
           port.postMessage({
             type: "result",
             id: message.data.id,
             data: {
               result: "token",
-              oauthToken,
+              token: token
             }
           });
         } else if (command.command === 'close') {
