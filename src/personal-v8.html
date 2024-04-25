@@ -81,7 +81,11 @@
     var intervalId;
 
     function initialListener(event) {
-      console.log('initialListener', event, pickerOrigin, targetWindow, intervalId);
+      console.log('initialListener');
+      console.log(event.origin);
+      console.log(pickerOrigin);
+      console.log(event.source);
+      console.log(targetWindow);
 
       if (event.origin === pickerOrigin && event.source === targetWindow) {
         var message = event.data;
