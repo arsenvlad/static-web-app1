@@ -35,9 +35,21 @@
     var pickerOptions = {
       sdk: "v8.0",
       authentication: {},
+      entry: {
+        oneDrive: {}
+      },
       messaging: {
         origin: location.origin,
         channelId: id
+      },
+      commands: {
+        pick: {
+          select: {
+            urls: {
+              download: true
+            }
+          }
+        }
       }
     };
 
