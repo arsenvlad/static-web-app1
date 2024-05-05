@@ -24,7 +24,7 @@
 <script>
   var hostPicker = document.getElementById('hostPicker');
   var oauthToken = document.getElementById('oauthToken');
-  var pickerUrl = document.getElementById('pickerUrl').value;
+  var pickerUrl = document.getElementById('pickerUrl');
   var output = document.getElementById('output');
   var frame = document.getElementById('frame');
 
@@ -59,7 +59,7 @@
     };
 
     var pickerPageUrl;
-    pickerPageUrl = pickerUrl + '/_layouts/15/FilePicker.aspx';
+    pickerPageUrl = pickerUrl.value + '/_layouts/15/FilePicker.aspx';
 
     var url = pickerPageUrl + '?filePicker=' + JSON.stringify(pickerOptions);
     var pickerOrigin = new URL(pickerPageUrl).origin;
