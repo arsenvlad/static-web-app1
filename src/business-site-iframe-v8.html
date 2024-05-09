@@ -70,8 +70,6 @@
       var message = event.data;
       output.textContent = JSON.stringify(message);
 
-      console.log(event);
-
       if (message.type === 'command') {
         port.postMessage({
           type: 'acknowledge',
@@ -82,7 +80,7 @@
 
         if (command.command == "authenticate") {
           var token = oauthToken.value;
-          console.log('authenticate ' + token);
+          console.log(command.resource);
           port.postMessage({
             type: "result",
             id: message.id,
