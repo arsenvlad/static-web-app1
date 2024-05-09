@@ -17,6 +17,10 @@
     <input id="oauthToken2" type="text" size="80" placeholder="OAuth token 2" />
   </div>
   <div>
+    <label for="oauthToken">OAuth Token 3</label>
+    <input id="oauthToken3" type="text" size="80" placeholder="OAuth token 3" />
+  </div>
+  <div>
     <button id="hostPicker">iFrame [Business] FilePicker v8</button>
   </div>
 
@@ -29,6 +33,7 @@
   var hostPicker = document.getElementById('hostPicker');
   var oauthToken = document.getElementById('oauthToken');
   var oauthToken2 = document.getElementById('oauthToken2');
+  var oauthToken3 = document.getElementById('oauthToken3');
   var pickerUrl = document.getElementById('pickerUrl');
   var output = document.getElementById('output');
   var frame = document.getElementById('frame');
@@ -88,8 +93,10 @@
           
           if (command.resource.indexOf('-my.sharepoint.com') > -1) {
             token = oauthToken.value;
-          } else {
+          } else if (command.resource.indexOf('sharepoint.com') > -1) {
             token = oauthToken2.value;
+          } else {
+            token = oauthToken3.value;
           }
 
           console.log(command);
