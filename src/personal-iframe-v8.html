@@ -36,7 +36,11 @@
       sdk: "v8.0",
       authentication: {},
       entry: {
-        oneDrive: {}
+        oneDrive: {},
+        sortBy: {
+          fieldName: "folder,fileSystemInfo/lastModifiedDateTime",
+          isAscending: false
+        }
       },
       messaging: {
         origin: location.origin,
