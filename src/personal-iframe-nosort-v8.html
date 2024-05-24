@@ -1,0 +1,172 @@
+<html>
+
+<head>
+</head>
+
+<body>
+  <div>
+    <label for="oauthToken">OAuth Token</label>
+    <input id="oauthToken" type="text" size="80" placeholder="OAuth token" />
+  </div>
+  <div>
+    <button id="hostPicker">iFrame [Personal] FilePicker v8</button>
+  </div>
+
+  <pre id="output"></pre>
+
+  <iframe name="picker" id="frame" style="width:800px; height:400px;"></iframe>
+</body>
+
+<script>
+  var hostPicker = document.getElementById('hostPicker');
+  var oauthToken = document.getElementById('oauthToken');
+  var output = document.getElementById('output');
+  var frame = document.getElementById('frame');
+
+  hostPicker.addEventListener('click', function () {
+    loadPicker(frame.contentWindow, function () {
+      frame.src = '';
+    });
+  });
+
+  function loadPicker(targetWindow, closePicker) {
+    var id = '' + Math.random().toFixed(6);
+
+    var pickerOptions = {
+      sdk: "v8.0",
+      authentication: {},
+      entry: {
+        oneDrive: {}
+      },
+      messaging: {
+        origin: location.origin,
+        channelId: id
+      },
+      commands: {
+        pick: {
+          select: {
+            urls: {
+              download: true
+            }
+          }
+        }
+      }
+    };
+
+    var pickerPageUrl;
+    pickerPageUrl = 'https://onedrive.live.com/picker';
+
+    var url = pickerPageUrl + '?filePicker=' + JSON.stringify(pickerOptions);
+    var pickerOrigin = new URL(pickerPageUrl).origin;
+
+    var port;
+
+    function messageListener(event) {
+      var message = event.data;
+      output.textContent = JSON.stringify(message);
+
+      console.log(event);
+
+      if (message.type === 'command') {
+        port.postMessage({
+          type: 'acknowledge',
+          id: message.id
+        });
+
+        var command = message.data;
+
+        if (command.command == "authenticate") {
+          var token = oauthToken.value;
+          console.log('authenticate ' + token);
+          port.postMessage({
+            type: "result",
+            id: message.id,
+            data: {
+              result: "token",
+              token,
+            }
+          });
+        } else if (command.command === 'close') {
+          port.removeEventListener('message', messageListener);
+
+          closePicker();
+        } else if (command.command === 'pick') {
+          port.removeEventListener('message', messageListener);
+
+          closePicker();
+        } else {
+          port.postMessage({
+            type: 'result',
+            id: message.id,
+            data: {
+              result: 'error',
+              error: {
+                code: 'unsupportedCommand'
+              }
+            }
+          });
+        }
+      } else if (message.type === 'notification') {
+
+      }
+    }
+
+    var intervalId;
+
+    function initialListener(event) {
+      if (event.origin === pickerOrigin && event.source === targetWindow) {
+        var message = event.data;
+        output.textContent = JSON.stringify(message);
+
+        if (message.type === 'initialize' && message.channelId === id) {
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = undefined;
+          }
+
+          port = event.ports[0];
+
+          port.addEventListener('message', messageListener);
+          port.start();
+
+          window.removeEventListener('message', initialListener);
+
+          port.postMessage({
+            type: 'activate'
+          });
+        }
+      }
+    }
+
+    intervalId = setInterval(function () {
+      var identifyParentMessage = {
+        type: 'identify-parent',
+        channelId: id
+      };
+
+      targetWindow.postMessage(identifyParentMessage, pickerOrigin);
+    }, 100);
+
+    window.addEventListener('message', initialListener);
+
+    var form = targetWindow.document.createElement('form');
+    form.setAttribute('method', 'POST');
+    form.setAttribute('action', url);
+
+    if (oauthToken.value) {
+      var oauthTokenInput = targetWindow.document.createElement('input');
+      oauthTokenInput.setAttribute('type', 'hidden');
+      oauthTokenInput.setAttribute('name', 'access_token');
+      oauthTokenInput.setAttribute('value', oauthToken.value);
+      form.appendChild(oauthTokenInput);
+    }
+
+    targetWindow.document.body.appendChild(form);
+
+    form.submit();
+  }
+
+
+</script>
+
+</html>
